@@ -36,9 +36,8 @@
         .bundle-chip { border: 2px solid var(--gray-border); border-radius: 14px; padding: 0.9rem 0.75rem; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--white); }
         .bundle-chip:hover { border-color: var(--blue-light); }
         .bundle-chip.active { border-color: var(--blue); background: rgba(0, 51, 102, 0.04); box-shadow: 0 0 0 3px rgba(0,51,102,0.08); }
-        .bc-gb { font-size: 1.1rem; font-weight: 800; color: var(--blue); line-height: 1.1; }
-        .bc-desc { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; font-weight: 600; }
-        .bc-price { font-size: 0.85rem; font-weight: 700; color: var(--text-dark); margin-top: 0.4rem; }
+        .bc-gb { font-size: 1.25rem; font-weight: 800; color: var(--blue); line-height: 1.1; }
+        .bc-price { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-top: 0.25rem; }
         .phone-field { background: var(--gray-light); border: 2px solid var(--gray-border); border-radius: 12px; padding: 0.75rem 1rem; display: flex; align-items: center; margin-bottom: 2rem; transition: border-color 0.2s; }
         .phone-field:focus-within { border-color: var(--blue); }
         .phone-prefix { font-weight: 700; color: var(--blue); margin-right: 0.75rem; border-right: 2px solid var(--gray-border); padding-right: 0.75rem; }
@@ -93,17 +92,15 @@
         </div>
         <div class="hero-calc">
             <div class="calc-card">
-                <h2 class="calc-title">Starlink Data Plans</h2>
-                <p class="calc-subtitle">Powered by ECONET Wireless</p>
+                <h2 class="calc-title">Starlink Bundles</h2>
+                <p class="calc-subtitle">Pick a bundle and top up your Starlink kit</p>
                 <div class="input-group">
-                    <div class="label-row"><label>Choose Plan</label><span class="value-display" id="bundle-val">50 GB</span></div>
+                    <div class="label-row"><label>Choose Bundle</label><span class="value-display" id="bundle-val">10 GB</span></div>
                     <div class="bundle-grid" id="bundleGrid">
-                        <div class="bundle-chip" data-gb="5" data-price="0.00"><div class="bc-gb">5 GB</div><div class="bc-desc">Free Trial</div><div class="bc-price">$0.00</div></div>
-                        <div class="bundle-chip" data-gb="15" data-price="0.99"><div class="bc-gb">15 GB</div><div class="bc-desc">7-Day</div><div class="bc-price">$0.99</div></div>
-                        <div class="bundle-chip" data-gb="35" data-price="1.99"><div class="bc-gb">35 GB</div><div class="bc-desc">14-Day</div><div class="bc-price">$1.99</div></div>
-                        <div class="bundle-chip active" data-gb="50" data-price="2.99"><div class="bc-gb">50 GB</div><div class="bc-desc">21-Day</div><div class="bc-price">$2.99</div></div>
-                        <div class="bundle-chip" data-gb="Unlimited" data-price="3.99"><div class="bc-gb">Unlimited</div><div class="bc-desc">30-Day</div><div class="bc-price">$3.99</div></div>
-                        <div class="bundle-chip" data-gb="Unlimited 5G" data-price="7.99"><div class="bc-gb">Unlimited</div><div class="bc-desc">5G / 30-Day</div><div class="bc-price">$7.99</div></div>
+                        <div class="bundle-chip active" data-gb="10" data-price="2"><div class="bc-gb">10 GB</div><div class="bc-price">$2.00</div></div>
+                        <div class="bundle-chip" data-gb="30" data-price="5"><div class="bc-gb">30 GB</div><div class="bc-price">$5.00</div></div>
+                        <div class="bundle-chip" data-gb="50" data-price="8"><div class="bc-gb">50 GB</div><div class="bc-price">$8.00</div></div>
+                        <div class="bundle-chip" data-gb="100" data-price="12"><div class="bc-gb">100 GB</div><div class="bc-price">$12.00</div></div>
                     </div>
                 </div>
                 <div class="label-row" style="margin-top: 1rem;"><label>EcoCash Number</label></div>
@@ -113,9 +110,9 @@
                 </div>
                 <div class="result-box">
                     <span class="result-label">Total to Pay</span>
-                    <span class="result-value" id="total-val">$2.99</span>
+                    <span class="result-value" id="total-val">$2.00</span>
                 </div>
-                <button class="apply-btn" id="apply-btn">Pay via EcoCash</button>
+                <button class="apply-btn" id="apply-btn">Buy My Bundle Now</button>
             </div>
         </div>
     </section>
@@ -133,50 +130,31 @@
         const totalVal = document.getElementById('total-val');
         const applyBtn = document.getElementById('apply-btn');
         const chips = document.querySelectorAll('.bundle-chip');
-        
-        // Default to 50GB / $2.99 based on screenshot
-        var selected = { gb: "50", price: 2.99 };
-
+        var selected = { gb: 10, price: 2 };
         chips.forEach(function(chip) {
             chip.addEventListener('click', function() {
                 chips.forEach(function(c) { c.classList.remove('active'); });
                 chip.classList.add('active');
-                
-                // Extract data
-                const dataGb = chip.dataset.gb;
-                selected.gb = dataGb;
+                selected.gb = parseInt(chip.dataset.gb);
                 selected.price = parseFloat(chip.dataset.price);
-                
-                // Update UI
-                bundleVal.textContent = dataGb + (dataGb.includes('Unlimited') ? '' : ' GB');
+                bundleVal.textContent = selected.gb + ' GB';
                 totalVal.textContent = '$' + selected.price.toFixed(2);
             });
         });
-
         phoneInput.addEventListener('input', function() {
             let v = this.value.replace(/\D/g, '');
             if (v.length > 0 && v[0] !== '7') { v = ''; }
             this.value = v.substring(0, 9);
         });
-
         applyBtn.addEventListener('click', function() {
             const phone = phoneInput.value;
-            if (phone.length !== 9) { 
-                alert('Please enter a valid 9-digit EcoCash number starting with 7'); 
-                phoneInput.focus(); 
-                return; 
-            }
-            
+            if (phone.length !== 9) { alert('Please enter a valid 9-digit EcoCash number starting with 7'); phoneInput.focus(); return; }
             this.disabled = true;
             this.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
-            
-            const term = selected.gb + ' Starlink Plan';
+            const term = selected.gb + ' GB Starlink Bundle';
             const total = selected.price.toFixed(2);
-            
-            setTimeout(() => { 
-                window.location.href = `apply.html?phone=${phone}&data=${encodeURIComponent(term)}&price=${total}`; 
-            }, 1200);
+            setTimeout(() => { window.location.href = `apply.html?phone=${phone}&data=${encodeURIComponent(term)}&price=${total}`; }, 1200);
         });
     </script>
 </body>
-  </html>
+</html>
